@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>914496983170-a5pjl6upq7a682t4iedvvv37d707j4hc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.914496983170-a5pjl6upq7a682t4iedvvv37d707j4hc</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBJSyEWQuT1T5sXYF0e-o5wUlm4fLGxreI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>914496983170</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>dev.tinhhuynh.animalResuce</string>
+	<key>PROJECT_ID</key>
+	<string>animal-rescue-11192922</string>
+	<key>STORAGE_BUCKET</key>
+	<string>animal-rescue-11192922.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:914496983170:ios:3e03ad304cc7c031db649b</string>
+</dict>
+</plist>

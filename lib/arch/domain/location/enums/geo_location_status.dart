@@ -1,0 +1,1 @@
+enum LocationStatus { entered, exited, none }

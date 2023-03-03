@@ -1,0 +1,104 @@
+name: animal_rescue
+description: Animal Rescue
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.4 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.5
+  flutter_native_splash: ^2.2.16
+  auto_route: ^5.0.4
+  freezed_annotation: ^2.2.0
+  json_annotation: ^4.7.0
+  dartz: ^0.10.1
+  uuid: ^3.0.7
+  flutter_bloc: ^8.1.1
+  get_it: ^7.2.0
+  flutter_localizations:
+    sdk: flutter
+  firebase_core : ^2.3.0
+  firebase_auth: ^4.1.5
+  image_picker: ^0.8.6
+  logger: ^1.1.0
+  enum_annotation: ^0.0.2
+  cloud_firestore: ^4.1.0
+  firebase_storage: ^11.0.6
+  path: ^1.8.2
+  google_maps_flutter: ^2.2.2
+  geolocator: ^9.0.2
+  flutter_easyloading: ^3.0.5
+  focus_detector: ^2.0.1
+  fluttertoast: ^8.1.2
+  dotted_border: ^2.0.0+3
+  carousel_slider: ^4.2.1
+  url_launcher: ^6.1.7
+  geoflutterfire2: ^2.3.14
+  custom_marker: ^1.0.0
+  infinite_scroll_pagination: ^3.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.10.0"
+  build_runner: ^2.3.2
+  flutter_gen_runner: ^5.1.0+1
+  auto_route_generator: ^5.0.3
+  freezed: ^2.3.1
+  json_serializable: ^6.5.4
+  flutter_lints: ^2.0.1
+  enum_generator: ^1.0.8
+
+flutter_gen:
+
+  # Optional
+  integrations:
+    flutter_svg: true
+    flare_flutter: false
+    rive: false
+    lottie: false
+
+  colors:
+    inputs:
+      - assets/colors/colors.xml
+
+flutter:
+  uses-material-design: true
+  assets:
+   - assets/icons/
+   - assets/images/
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/lato/Lato-Black.ttf
+          weight: 900
+        - asset: assets/fonts/lato/Lato-BlackItalic.ttf
+          weight: 900
+          style: italic
+        - asset: assets/fonts/lato/Lato-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/lato/Lato-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/lato/Lato-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/lato/Lato-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/lato/Lato-Light.ttf
+          weight: 300
+        - asset: assets/fonts/lato/Lato-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/lato/Lato-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/lato/Lato-ThinItalic.ttf
+          weight: 100
+          style: italic
+flutter_intl:
+  enabled: true

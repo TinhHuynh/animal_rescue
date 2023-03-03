@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<colors>
+    <color name="brand" type="material">#4ca772</color>
+    <color name="cinnamon" type="material">#955E1C</color>
+    <color name="yellow_ocher" type="material material-accent">#DF9527</color>
+</colors>
