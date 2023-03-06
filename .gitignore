@@ -32,7 +32,6 @@
 /lib/firebase_options.dart
 /lib/generated/
 /lib/gen/
-/lib/l10n/
 
 # generated files
 **/*.freezed.dart

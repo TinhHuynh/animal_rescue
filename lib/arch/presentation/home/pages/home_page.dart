@@ -1,3 +1,4 @@
+import 'package:animal_rescue/arch/presentation/home/widgets/drawer.dart';
 import 'package:animal_rescue/di/get_it.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
 import 'package:animal_rescue/extensions/dartz_x.dart';
@@ -23,6 +24,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return CustomAnnotatedRegion(
@@ -30,41 +33,43 @@ class HomePageState extends State<HomePage> {
         child: BlocProvider(
           create: (context) => getIt<HomeCubit>()..init(),
           child: BlocListener<HomeCubit, HomeState>(
-              listener: (context, state) {
-                toggleLoading(state.event.isLoading);
-                state.event.maybeWhen(
-                    orElse: () {},
-                    locationError: () => state.failureOrLocation
-                        .foldDefaultRight(
-                            (l) => l.when(
-                                serviceNotEnabled: () => showAlertDialog(
-                                        context,
-                                        context
-                                            .s.error_disabled_location_service,
-                                        context.s
-                                            .error_disabled_location_service_msg,
-                                        [
-                                          AlertDialogAction(context.s.ok, () {
-                                            Navigator.of(context).pop();
-                                          })
-                                        ]),
-                                permissionDenied: () =>
-                                    _showPermissionDeniedAlert(context),
-                                permissionDeniedForever: () =>
-                                    _showPermissionDeniedAlert(context),
-                                unableToQueryAtLocation: () =>
-                                    _showUnableToQueryAtLocationToast(context)),
-                            () => null),
-                    locationUpdated: () async {
-                      _showInstruction();
-                    });
-              },
+              listener: (context, state) => _onStateChange(context, state),
               child: Scaffold(
+                key: _scaffoldKey,
                 body: _googleMap(context),
+                drawer: const HomeDrawer(),
               )),
         ),
       ),
     );
+  }
+
+  _onStateChange(BuildContext context, HomeState state) {
+    toggleLoading(state.event.isLoading || state.event.isLoggingOut);
+    state.event.maybeWhen(
+        orElse: () {},
+        locationError: () => _onLocationError(state),
+        locationUpdated: () async => _showInstruction(),
+        loggedOut: () => _onLoggedOut(context),
+        logOutFailed: () => _onLogOutFailed(context));
+  }
+
+  _onLocationError(HomeState state) {
+    state.failureOrLocation.foldDefaultRight(
+        (l) => l.when(
+            serviceNotEnabled: () => showAlertDialog(
+                    context,
+                    context.s.error_disabled_location_service,
+                    context.s.error_disabled_location_service_msg, [
+                  AlertDialogAction(context.s.ok, () {
+                    Navigator.of(context).pop();
+                  })
+                ]),
+            permissionDenied: () => _showPermissionDeniedAlert(context),
+            permissionDeniedForever: () => _showPermissionDeniedAlert(context),
+            unableToQueryAtLocation: () =>
+                _showUnableToQueryAtLocationToast(context)),
+        () => null);
   }
 
   Widget _googleMap(BuildContext context) {
@@ -98,5 +103,14 @@ class HomePageState extends State<HomePage> {
   void _showUnableToQueryAtLocationToast(BuildContext context) {
     showToast(context.s.unable_to_query_location_of_cases,
         backgroundColor: Colors.red);
+  }
+
+  _onLoggedOut(BuildContext context) {
+    _scaffoldKey.currentState?.closeDrawer();
+    context.router.replace(const LoginRoute());
+  }
+
+  _onLogOutFailed(BuildContext context) {
+    showError(context, context.s.failed_to_logout);
   }
 }

@@ -22,7 +22,6 @@ import '../arch/infrastructure/core/firebase/storage_helper.dart';
 import '../arch/infrastructure/core/location/location_helper.dart';
 import '../arch/infrastructure/location/repositories/location_repository.dart';
 
-
 final getIt = GetIt.instance;
 
 setupDi() {
@@ -45,12 +44,12 @@ setupDi() {
   getIt.registerFactory<LoginCubit>(() => LoginCubit(getIt<AuthRepository>()));
   getIt.registerFactory<RegisterCubit>(
       () => RegisterCubit(getIt<AuthRepository>()));
-  getIt.registerFactory<HomeCubit>(
-      () => HomeCubit(getIt<LocationRepository>(), getIt<CaseRepository>()));
+  getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt<LocationRepository>(),
+      getIt<CaseRepository>(), getIt<AuthRepository>()));
   getIt.registerFactory<CreateCaseCubit>(
       () => CreateCaseCubit(getIt<CaseRepository>()));
   getIt.registerFactory<ViewCaseCubit>(
       () => ViewCaseCubit(getIt<CaseRepository>(), getIt<AuthRepository>()));
-  getIt.registerFactory<ChatCubit>(
-      () => ChatCubit(getIt<ChatRepository>(), getIt<AuthRepository>(), getIt<CaseRepository>()));
+  getIt.registerFactory<ChatCubit>(() => ChatCubit(getIt<ChatRepository>(),
+      getIt<AuthRepository>(), getIt<CaseRepository>()));
 }

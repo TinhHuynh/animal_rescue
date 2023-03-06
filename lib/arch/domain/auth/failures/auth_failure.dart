@@ -18,4 +18,6 @@ class AuthFailure with _$AuthFailure {
   const factory AuthFailure.invalidPassword() = InvalidPassword;
 
   const factory AuthFailure.invalidUserAvatar() = InvalidUserAvatar;
+
+  const factory AuthFailure.unableToLogOut() = UnableToLogout;
 }

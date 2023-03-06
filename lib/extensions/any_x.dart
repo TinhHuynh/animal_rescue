@@ -19,7 +19,7 @@ hideLoading() {
   EasyLoading.dismiss();
 }
 
-toggleLoading(bool toggle){
+toggleLoading(bool toggle) {
   toggle ? showLoading() : hideLoading();
 }
 
@@ -52,4 +52,16 @@ backIcon(BuildContext context) {
       color: Colors.black,
     ),
   );
+}
+
+double paddingTopOr(BuildContext context, double paddingTop) {
+  return context.mediaQuery.padding.top != 0
+      ? context.mediaQuery.padding.top
+      : paddingTop;
+}
+
+double paddingBottomOr(BuildContext context, double paddingTop) {
+  return context.mediaQuery.padding.bottom != 0
+      ? context.mediaQuery.padding.bottom
+      : paddingTop;
 }
