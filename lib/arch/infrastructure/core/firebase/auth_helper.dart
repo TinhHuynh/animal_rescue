@@ -51,6 +51,14 @@ class AuthHelper {
   String? getUserId() {
     return _auth.currentUser?.uid;
   }
+
+  Future<void> logout() async {
+    try {
+      return await _auth.signOut();
+    } catch (e) {
+      throw UnableToLogout();
+    }
+  }
 }
 
 class UserNotFound implements Exception {}
@@ -60,3 +68,5 @@ class UnableToLogin implements Exception {}
 class EmailAlreadyInUse implements Exception {}
 
 class UnableToRegister implements Exception {}
+
+class UnableToLogout implements Exception {}

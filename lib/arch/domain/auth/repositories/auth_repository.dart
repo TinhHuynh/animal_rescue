@@ -19,4 +19,6 @@ abstract class AuthRepository {
   bool isUserLoggedIn();
 
   String? getUserId();
+
+  Future<Either<AuthFailure, Unit>> logout();
 }

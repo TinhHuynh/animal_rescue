@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:animal_rescue/arch/infrastructure/auth/dtos/user_dto.dart';
-
 import 'package:animal_rescue/utils/logger.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../domain/auth/entities/user.dart' as user;
-import '../../../domain/auth/failures/auth_failure.dart' ;
+import '../../../domain/auth/failures/auth_failure.dart';
 import '../../../domain/auth/repositories/auth_repository.dart';
 import '../../../domain/auth/value_objects/value_object.dart';
 import '../../../domain/core/value_objects.dart';
@@ -95,12 +94,22 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  bool isUserLoggedIn(){
+  bool isUserLoggedIn() {
     return _authHelper.isSignedIn();
   }
 
   @override
   String? getUserId() {
     return _authHelper.getUserId();
+  }
+
+  @override
+  Future<Either<AuthFailure, Unit>> logout() async {
+    try {
+      await _authHelper.logout();
+      return right(unit);
+    } catch (e) {
+      return left(const AuthFailure.unableToLogOut());
+    }
   }
 }
