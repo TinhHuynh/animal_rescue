@@ -51,11 +51,7 @@ class ViewCasePage extends StatelessWidget {
                 child: BlocConsumer<ViewCaseCubit, ViewCaseState>(
                   buildWhen: (_, s) => s.event.isCaseLoaded,
                   listener: (context, state) {
-                    if (state.event.isLoading) {
-                      showLoading();
-                    } else {
-                      hideLoading();
-                    }
+                    toggleLoading(state.event.isLoading);
                     state.event.maybeWhen(
                       orElse: () {},
                       loadCaseFailed: () => _showLoadCaseFailed(context),

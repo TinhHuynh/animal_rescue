@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:animal_rescue/extensions/any_x.dart';
@@ -48,18 +47,16 @@ class CreateCasePage extends StatelessWidget {
                     EdgeInsets.only(top: context.mediaQuery.padding.top + 52),
                 child: BlocListener<CreateCaseCubit, CreateCaseState>(
                   listener: (context, state) {
+                    toggleLoading(state.event == CreateCaseEvent.submitting);
                     state.event.whenOrNull(
-                      orElse: () => hideLoading(),
-                      submitting: () => showLoading(),
+                      orElse: () {},
                       submitSuccess: () {
-                        hideLoading();
                         showToast(
                             context.s.the_case_has_been_created_successfully);
                         _goToViewCase(context, state);
                         context.navigator.pop();
                       },
                       submitFailed: () {
-                        hideLoading();
                         showError(context, context.s.failed_to_create_case);
                       },
                     );

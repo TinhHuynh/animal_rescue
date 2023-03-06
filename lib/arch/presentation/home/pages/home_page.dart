@@ -31,11 +31,7 @@ class HomePageState extends State<HomePage> {
           create: (context) => getIt<HomeCubit>()..init(),
           child: BlocListener<HomeCubit, HomeState>(
               listener: (context, state) {
-                if (state.event.isLoading) {
-                  showLoading();
-                } else {
-                  hideLoading();
-                }
+                toggleLoading(state.event.isLoading);
                 state.event.maybeWhen(
                     orElse: () {},
                     locationError: () => state.failureOrLocation
