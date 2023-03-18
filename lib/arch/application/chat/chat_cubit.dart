@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
-import 'package:enum_annotation/enum_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -16,8 +15,6 @@ import '../../domain/core/value_objects.dart';
 
 part 'chat_cubit.freezed.dart';
 
-part 'chat_cubit.g.dart';
-
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
@@ -31,24 +28,19 @@ class ChatCubit extends Cubit<ChatState> {
 
   Future<void> submitMessage(UniqueId caseId, String text) async {
     if (!await _isCaseActive(caseId)) {
-      emit(state.copyWith(
-          event: ChatEvent.submitMessageFailed,
-          submitMessageOptions: Some(left(const ChatFailure.failedToSubmitMessage()))));
+      emit(ChatState.submitMessageFailed(
+          const ChatFailure.failedToSubmitMessage()));
     }
-    emit(state.copyWith(event: ChatEvent.submittingLoading));
     final result =
         await _chatRepository.submitMessage(caseId, MessageContent(text));
     emit(result.fold(
-        (l) => state.copyWith(
-            event: ChatEvent.submitMessageFailed,
-            submitMessageOptions: Some(left(l))),
-        (r) => state.copyWith(
-            event: ChatEvent.submitMessageSuccess,
-            submitMessageOptions: Some(right(unit)))));
+        (l) => ChatState.submitMessageFailed(
+            const ChatFailure.failedToSubmitMessage()),
+        (r) => ChatState.submitMessageSuccess()));
   }
 
   Future getMessagesFor(UniqueId caseId, MessageDate? beforeDate) async {
-    emit(state.copyWith(event: ChatEvent.loadingPage));
+    emit(ChatState.loadingPage());
     await _chatRepository
         .getMessages(caseId, beforeDate, pageSize: 20)
         .then((value) => _processPaging(caseId, beforeDate, value));
@@ -56,31 +48,24 @@ class ChatCubit extends Cubit<ChatState> {
 
   _processPaging(UniqueId caseId, MessageDate? afterMessageDate,
       Either<ChatFailure, List<Message>> value) {
-    value.fold(
-        (l) => emit(state.copyWith(
-            event: ChatEvent.loadPageFailed,
-            loadPageOptions: some(left(l)))), (r) {
+    value.fold((l) => emit(ChatState.loadPageFailed(l)), (r) {
       if (r.isNotEmpty) {
         final nextPageKey = r.last.createdDate;
-        emit(state.copyWith(
-            event: ChatEvent.appendPage,
-            loadPageOptions:
-                some(right(PagingData(r, nextItemKey: nextPageKey)))));
-        setUpNewMessageObserve(caseId, beforeDate: r.first.createdDate);
+        emit(ChatState.appendPage(PagingData(r, nextItemKey: nextPageKey)));
+        setUpNewMessageObserveIfNone(caseId, beforeDate: r.first.createdDate);
       } else {
-        emit(state.copyWith(
-            event: ChatEvent.appendLastPage,
-            loadPageOptions: some(right(PagingData(r)))));
-        setUpNewMessageObserve(caseId);
+        emit(ChatState.appendLastPage(PagingData(r)));
+        setUpNewMessageObserveIfNone(caseId);
       }
     });
   }
 
-  void setUpNewMessageObserve(UniqueId caseId, {MessageDate? beforeDate}) {
+  void setUpNewMessageObserveIfNone(UniqueId caseId,
+      {MessageDate? beforeDate}) {
     if (newMessageSub != null) return;
     newMessageSub =
         _chatRepository.getNewMessageStream(caseId, beforeDate).listen((event) {
-      emit(state.copyWith(event: ChatEvent.newMessage, newMessage: event));
+      emit(ChatState.newMessage(event));
     });
   }
 

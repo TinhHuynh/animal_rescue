@@ -1,5 +1,5 @@
+import 'package:animal_rescue/arch/domain/auth/value_objects/value_object.dart';
 import 'package:animal_rescue/di/get_it.dart';
-import 'package:animal_rescue/extensions/any_x.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
 import 'package:animal_rescue/gen/assets.gen.dart';
 import 'package:animal_rescue/gen/colors.gen.dart';
@@ -8,6 +8,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../extensions/any_x.dart';
 import '../../../../../routes/app_router.dart';
 import '../../../../application/auth/login/login_cubit.dart';
 import '../../../core/widgets/border_password_text_field.dart';
@@ -15,8 +16,16 @@ import '../../../core/widgets/border_text_field.dart';
 import '../../../core/widgets/custom_annotated_region.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +38,15 @@ class LoginPage extends StatelessWidget {
             create: (context) => getIt<LoginCubit>(),
             child: BlocListener<LoginCubit, LoginState>(
                 listener: (context, state) async {
-              if (state.event.isSuccess) {
-                await Future.delayed(const Duration(seconds: 1));
-                context.router.popForced();
-                context.router.push(const HomeRoute());
-              }
-              toggleLoading(state.event == Event.submitting);
+              toggleLoading(
+                  state.maybeWhen(orElse: () => false, submitting: () => true));
+              state.maybeWhen(
+                  orElse: () {},
+                  success: () async {
+                    await Future.delayed(const Duration(seconds: 1));
+                    context.router.popForced();
+                    context.router.push(const HomeRoute());
+                  });
             }, child: Builder(
               builder: (context) {
                 return _loginForm(context);
@@ -103,38 +115,38 @@ class LoginPage extends StatelessWidget {
   _emailField(BuildContext context) {
     return BorderTextField(
       keyboardType: TextInputType.emailAddress,
-      onChanged: (s) => context.read<LoginCubit>().updateEmail(s),
+      onChanged: (s) => email = s,
       labelText: context.s.email,
     );
   }
 
   _passwordField(BuildContext context) {
     return BorderPasswordTextField(
-      onChanged: (s) => context.read<LoginCubit>().updatePassword(s),
+      onChanged: (s) => password = s,
       labelText: context.s.password,
     );
   }
 
   _msgText(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
-      builder: (context, state) => state.loginOption.fold(
-          () => const SizedBox(),
-          (a) => a.fold(
-              (l) => Text(
-                    l.maybeWhen(
-                        orElse: () => '',
-                        invalidEmailAndPasswordCombination: () =>
-                            context.s.invalid_email_password,
-                        serverError: () => context.s.failed_to_login),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-              (r) => Text(
-                    context.s.logged_in_successfully,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: ColorName.brand),
-                  ))),
-      buildWhen: (_, s) => s.canRebuild,
+      builder: (context, state) => state.maybeWhen(
+          orElse: () => const SizedBox(),
+          success: () => Text(
+                context.s.logged_in_successfully,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: ColorName.brand),
+              ),
+          error: (e) => Text(
+                e.maybeWhen(
+                    orElse: () => '',
+                    invalidEmailAndPasswordCombination: () =>
+                        context.s.invalid_email_password,
+                    serverError: () => context.s.failed_to_login),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
+              )),
+      buildWhen: (_, s) => s.maybeWhen(
+          orElse: () => false, success: () => true, error: (_) => true),
     );
   }
 
@@ -142,7 +154,9 @@ class LoginPage extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         KeyboardUtils.hideKeyboard();
-        context.read<LoginCubit>().login();
+        context
+            .read<LoginCubit>()
+            .login(EmailAddress(email), Password(password));
       },
       child: Text(context.s.login),
     );

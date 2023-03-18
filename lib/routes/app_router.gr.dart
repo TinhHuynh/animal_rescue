@@ -47,7 +47,6 @@ class _$AppRouter extends RootStackRouter {
         child: ViewCasePage(
           key: args.key,
           caseId: args.caseId,
-          caze: args.caze,
         ),
       );
     },
@@ -131,14 +130,12 @@ class ViewCaseRoute extends PageRouteInfo<ViewCaseRouteArgs> {
   ViewCaseRoute({
     Key? key,
     required UniqueId caseId,
-    Case? caze,
   }) : super(
           ViewCaseRoute.name,
           path: '/view-case-page',
           args: ViewCaseRouteArgs(
             key: key,
             caseId: caseId,
-            caze: caze,
           ),
         );
 
@@ -149,18 +146,15 @@ class ViewCaseRouteArgs {
   const ViewCaseRouteArgs({
     this.key,
     required this.caseId,
-    this.caze,
   });
 
   final Key? key;
 
   final UniqueId caseId;
 
-  final Case? caze;
-
   @override
   String toString() {
-    return 'ViewCaseRouteArgs{key: $key, caseId: $caseId, caze: $caze}';
+    return 'ViewCaseRouteArgs{key: $key, caseId: $caseId}';
   }
 }
 

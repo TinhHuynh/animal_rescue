@@ -10,7 +10,7 @@ abstract class AuthRepository {
   );
 
   Future<Either<AuthFailure, Unit>> registerWithEmailAndPassword(
-    UserAvatar userAvatar,
+    UserAvatar? userAvatar,
     Username username,
     EmailAddress emailAddress,
     StrictPassword password,
