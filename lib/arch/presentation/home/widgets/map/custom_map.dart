@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animal_rescue/extensions/dartz_x.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,10 +31,12 @@ class _CustomMapState extends State<CustomMap> {
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
       listener: (context, state) {
-        state.failureOrLocation.foldDefaultLeft(() {}, (r) {
-          _onMyLocationUpdated(r);
-          _setUpCaseLocationStream(context, r);
-        });
+        state.maybeWhen(
+            orElse: () {},
+            locationUpdated: (r) {
+              _onMyLocationUpdated(r);
+              _setUpCaseLocationStream(context, r);
+            });
       },
       child: GoogleMap(
           myLocationButtonEnabled: false,

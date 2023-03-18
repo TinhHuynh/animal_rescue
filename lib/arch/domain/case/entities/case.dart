@@ -21,3 +21,7 @@ class Case with _$Case {
     required CaseStatus status,
   }) = _Case;
 }
+
+extension CaseExtension on Case {
+  bool get isActive => status == CaseStatus.active;
+}

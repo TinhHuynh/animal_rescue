@@ -1,25 +1,24 @@
-import 'dart:io';
-
+import 'package:animal_rescue/arch/domain/case/value_objects/value_object.dart';
+import 'package:animal_rescue/arch/domain/core/value_objects.dart';
+import 'package:animal_rescue/arch/presentation/case/create_case/widgets/add_photo.dart';
 import 'package:animal_rescue/extensions/any_x.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
-import 'package:animal_rescue/extensions/dartz_x.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../di/get_it.dart';
-import '../../../../../gen/colors.gen.dart';
 import '../../../../../routes/app_router.dart';
 import '../../../../../utils/keyboard_utils.dart';
 import '../../../../application/case/create_case/create_case_cubit.dart';
 import '../../../../domain/location/entities/location.dart';
-import '../../../core/dialogs/image_picker.dart';
 import '../../../core/widgets/border_text_field.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 
-class CreateCasePage extends StatelessWidget {
-  const CreateCasePage({Key? key}) : super(key: key);
+class CreateCasePage extends StatefulWidget {
+  const CreateCasePage({Key? key, required this.location}) : super(key: key);
+
+  final Location location;
 
   static show(BuildContext context, Location location) {
     showModalBottomSheet(
@@ -28,12 +27,23 @@ class CreateCasePage extends StatelessWidget {
         isScrollControlled: true,
         builder: (context) {
           return BlocProvider<CreateCaseCubit>(
-            create: (context) =>
-                getIt<CreateCaseCubit>()..setLocation(location),
-            child: const CreateCasePage(),
+            create: (context) => getIt<CreateCaseCubit>(),
+            child: CreateCasePage(
+              location: location,
+            ),
           );
         });
   }
+
+  @override
+  State<CreateCasePage> createState() => _CreateCasePageState();
+}
+
+class _CreateCasePageState extends State<CreateCasePage> {
+  String title = "";
+  String description = "";
+  String address = "";
+  List<CaseLocalPhoto> photos = [];
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +57,23 @@ class CreateCasePage extends StatelessWidget {
                     EdgeInsets.only(top: context.mediaQuery.padding.top + 52),
                 child: BlocListener<CreateCaseCubit, CreateCaseState>(
                   listener: (context, state) {
-                    toggleLoading(state.event == CreateCaseEvent.submitting);
-                    state.event.whenOrNull(
+                    toggleLoading(state.maybeWhen(
+                        orElse: () => false, submitting: () => true));
+                    state.maybeWhen(
                       orElse: () {},
-                      submitSuccess: () {
+                      submitSuccess: (r) {
                         showToast(
                             context.s.the_case_has_been_created_successfully);
-                        _goToViewCase(context, state);
+                        _goToViewCase(context, r);
                         context.navigator.pop();
                       },
-                      submitFailed: () {
-                        showError(context, context.s.failed_to_create_case);
+                      submitFailed: (e) {
+                        e.maybeWhen(
+                            orElse: () {},
+                            failedToCreateCase: () {
+                              showError(
+                                  context, context.s.failed_to_create_case);
+                            });
                       },
                     );
                   },
@@ -119,223 +135,88 @@ class CreateCasePage extends StatelessWidget {
 
   _titleField(BuildContext context) {
     return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-      buildWhen: (_, state) => state.event.isInputFailed,
+      buildWhen: (_, state) => state.maybeWhen(
+          orElse: () => false,
+          submitting: () => true,
+          submitFailed: (e) =>
+              e.maybeWhen(orElse: () => false, invalidTitle: () => true)),
       builder: (context, state) {
         return BorderTextField(
-          keyboardType: TextInputType.text,
-          onChanged: context.read<CreateCaseCubit>().updateTitle,
-          labelText: context.s.title,
-          errorText: state.inputOption.foldDefaultRight(
-              (l) => l.maybeWhen(
-                  orElse: () => null,
-                  invalidTitle: () => context.s.invalid_title),
-              () => null),
-        );
+            keyboardType: TextInputType.text,
+            onChanged: (s) => title = s,
+            labelText: context.s.title,
+            errorText: state.maybeWhen(
+                orElse: () => null,
+                submitFailed: (e) => e.maybeWhen(
+                    orElse: () => null,
+                    invalidPhoto: () => context.s.invalid_title)));
       },
     );
   }
 
   _descriptionField(BuildContext context) {
     return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-      buildWhen: (_, state) => state.event.isInputFailed,
+      buildWhen: (_, state) => state.maybeWhen(
+          orElse: () => false,
+          submitting: () => true,
+          submitFailed: (e) =>
+              e.maybeWhen(orElse: () => false, invalidDescription: () => true)),
       builder: (context, state) {
         return BorderTextField(
-          keyboardType: TextInputType.multiline,
-          onChanged: context.read<CreateCaseCubit>().updateDescription,
-          maxLines: 5,
-          labelText: context.s.description,
-          errorText: state.inputOption.foldDefaultRight(
-              (l) => l.maybeWhen(
-                  orElse: () => null,
-                  invalidDescription: () => context.s.invalid_description),
-              () => null),
-        );
+            keyboardType: TextInputType.multiline,
+            onChanged: (s) => description = s,
+            maxLines: 5,
+            labelText: context.s.description,
+            errorText: state.maybeWhen(
+                orElse: () => null,
+                submitFailed: (e) => e.maybeWhen(
+                    orElse: () => null,
+                    invalidDescription: () => context.s.invalid_description)));
       },
     );
   }
 
   _addressField(BuildContext context) {
     return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-      buildWhen: (_, state) => state.event.isInputFailed,
+      buildWhen: (_, state) => state.maybeWhen(
+          orElse: () => false,
+          submitting: () => true,
+          submitFailed: (e) =>
+              e.maybeWhen(orElse: () => false, invalidAddress: () => true)),
       builder: (context, state) {
         return BorderTextField(
-          keyboardType: TextInputType.streetAddress,
-          onChanged: context.read<CreateCaseCubit>().updateAddress,
-          labelText: context.s.address,
-          errorText: state.inputOption.foldDefaultRight(
-              (l) => l.maybeWhen(
-                  orElse: () => null,
-                  invalidAddress: () => context.s.invalid_address),
-              () => null),
-        );
+            keyboardType: TextInputType.streetAddress,
+            onChanged: (s) => address = s,
+            labelText: context.s.address,
+            errorText: state.maybeWhen(
+                orElse: () => null,
+                submitFailed: (e) => e.maybeWhen(
+                    orElse: () => null,
+                    invalidAddress: () => context.s.invalid_address)));
       },
     );
   }
 
   _addPhotoSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.s.add_photos,
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        SizedBox(
-          height: 150,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _addPhoto(context),
-              _photoList(),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        _photoMessage()
-      ],
-    );
-  }
-
-  _addPhoto(BuildContext context) {
-    return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-      buildWhen: (_, state) => state.event.maybeWhen(
-          orElse: () => false,
-          addPhoto: () => true,
-          removePhoto: () => true,
-          inputFailed: () => true),
-      builder: (context, state) {
-        final color = state.photos.isFull
-            ? Colors.grey
-            : state.event.isInputFailed
-                ? state.inputOption.foldDefaultRight(
-                    (l) => l.maybeWhen(
-                          orElse: () => ColorName.brand,
-                          invalidPhoto: () => Colors.red,
-                          missingPhoto: () => Colors.red,
-                          moreThan3Photos: () => Colors.red,
-                        ),
-                    () => ColorName.brand)
-                : ColorName.brand;
-        return GestureDetector(
-          onTap: () => state.photos.isFull ? null : _openImagePicker(context),
-          child: DottedBorder(
-            color: color,
-            strokeWidth: 2,
-            child: SizedBox(
-              width: 150,
-              height: 150,
-              child: Icon(
-                Icons.add_a_photo,
-                size: 75,
-                color: color,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  _photoList() {
-    return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-      buildWhen: (_, state) => state.event.maybeWhen(
-        orElse: () => false,
-        addPhoto: () => true,
-        removePhoto: () => true,
-      ),
-      builder: (context, state) {
-        return Row(
-          children: state.photos.value.fold(
-              (l) => [const SizedBox()],
-              (r) => r
-                  .map((e) => e.value
-                      .fold((l) => const SizedBox(), (r) => _photo(context, r)))
-                  .toList()),
-        );
-      },
-    );
-  }
-
-  Widget _photo(BuildContext context, String path) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0),
-      child: Stack(
-        children: [
-          Image.file(File(path), width: 150, height: 150, fit: BoxFit.cover),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () => context.read<CreateCaseCubit>().removePhoto(path),
-              child: const Padding(
-                padding: EdgeInsets.all(4),
-                child: Icon(
-                  Icons.delete_forever,
-                  color: ColorName.brand,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _photoMessage() {
-    return BlocBuilder<CreateCaseCubit, CreateCaseState>(
-        buildWhen: (_, state) => state.event.maybeWhen(
-              orElse: () => false,
-              inputFailed: () => true,
-              addPhoto: () => true,
-              removePhoto: () => true,
-            ),
-        builder: (context, state) {
-          return state.event.isInputFailed
-              ? state.inputOption.foldDefaultRight(
-                  (l) => l.maybeWhen(
-                      orElse: () => const SizedBox(),
-                      invalidPhoto: () => Text(context.s.invalid_photo,
-                          style: const TextStyle(color: Colors.red)),
-                      missingPhoto: () => Text(context.s.missing_photo,
-                          style: const TextStyle(color: Colors.red)),
-                      moreThan3Photos: () => Text(
-                          context.s.more_than_3_photos_are_not_allowed,
-                          style: const TextStyle(color: Colors.red))),
-                  () => const SizedBox(),
-                )
-              : const SizedBox();
-        });
+    return AddPhotoSection(onPhotoListUpdated: (l) => photos = l);
   }
 
   _submitButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
         KeyboardUtils.hideKeyboard();
-        context.read<CreateCaseCubit>().submit();
+        context.read<CreateCaseCubit>().submit(
+            widget.location,
+            CaseTitle(title),
+            CaseDescription(description),
+            CaseAddress(address),
+            List3(photos));
       },
       child: Text(context.s.submit),
     );
   }
 
-  _openImagePicker(BuildContext context) {
-    showImagePicker(context, (file) {
-      if (file != null) {
-        context.read<CreateCaseCubit>().addPhoto(file.path);
-      }
-    });
-  }
-
-  void _goToViewCase(BuildContext context, CreateCaseState state) {
-    state.event.whenOrNull(
-      submitSuccess: () {
-        state.submitOption.foldDefaultLeft(() => null, (r) {
-          context.pushRoute(ViewCaseRoute(caseId: r));
-        });
-      },
-    );
+  void _goToViewCase(BuildContext context, UniqueId id) {
+    context.pushRoute(ViewCaseRoute(caseId: id));
   }
 }

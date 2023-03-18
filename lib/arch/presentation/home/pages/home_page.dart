@@ -1,7 +1,7 @@
+import 'package:animal_rescue/arch/domain/location/failures/location_failure.dart';
 import 'package:animal_rescue/arch/presentation/home/widgets/drawer.dart';
 import 'package:animal_rescue/di/get_it.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
-import 'package:animal_rescue/extensions/dartz_x.dart';
 import 'package:animal_rescue/routes/app_router.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -45,38 +45,36 @@ class HomePageState extends State<HomePage> {
   }
 
   _onStateChange(BuildContext context, HomeState state) {
-    toggleLoading(state.event.isLoading || state.event.isLoggingOut);
-    state.event.maybeWhen(
+    toggleLoading(state.maybeWhen(orElse: () => false, loading: () => true));
+    state.maybeWhen(
         orElse: () {},
-        locationError: () => _onLocationError(state),
-        locationUpdated: () async => _showInstruction(),
+        locationError: (e) => _onLocationError(e),
+        locationUpdated: (l) => _showInstruction(),
         loggedOut: () => _onLoggedOut(context),
-        logOutFailed: () => _onLogOutFailed(context));
+        logoutFailed: (e) => _onLogOutFailed(context));
   }
 
-  _onLocationError(HomeState state) {
-    state.failureOrLocation.foldDefaultRight(
-        (l) => l.when(
-            serviceNotEnabled: () => showAlertDialog(
-                    context,
-                    context.s.error_disabled_location_service,
-                    context.s.error_disabled_location_service_msg, [
-                  AlertDialogAction(context.s.ok, () {
-                    Navigator.of(context).pop();
-                  })
-                ]),
-            permissionDenied: () => _showPermissionDeniedAlert(context),
-            permissionDeniedForever: () => _showPermissionDeniedAlert(context),
-            unableToQueryAtLocation: () =>
-                _showUnableToQueryAtLocationToast(context)),
-        () => null);
+  _onLocationError(LocationFailure failure) {
+    failure.when(
+        serviceNotEnabled: () => showAlertDialog(
+                context,
+                context.s.error_disabled_location_service,
+                context.s.error_disabled_location_service_msg, [
+              AlertDialogAction(context.s.ok, () {
+                Navigator.of(context).pop();
+              })
+            ]),
+        permissionDenied: () => _showPermissionDeniedAlert(context),
+        permissionDeniedForever: () => _showPermissionDeniedAlert(context),
+        unableToQueryAtLocation: () =>
+            _showUnableToQueryAtLocationToast(context));
   }
 
   Widget _googleMap(BuildContext context) {
     return CustomMap(
       onTap: (l) => _showCreateCaseSheet(context, l),
       onMarkerTap: (caze) {
-        context.pushRoute(ViewCaseRoute(caseId: caze.id, caze: caze));
+        context.pushRoute(ViewCaseRoute(caseId: caze.id));
       },
     );
   }

@@ -1,5 +1,3 @@
-import 'package:dartz/dartz.dart';
-import 'package:enum_annotation/enum_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -9,67 +7,37 @@ import '../../../domain/auth/value_objects/value_object.dart';
 
 part 'register_cubit.freezed.dart';
 
-part 'register_cubit.g.dart';
-
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   final AuthRepository _authRepository;
 
-  RegisterCubit(this._authRepository) : super(RegisterState.initial());
+  RegisterCubit(this._authRepository) : super(const RegisterState.initial());
 
-  updateAvatar(String path) {
-    emit(state.copyWith(
-        event: RegisterEvent.avatarUpdated, userAvatar: UserAvatar(path)));
-  }
-
-  updateUsername(String username) {
-    emit(state.copyWith(username: Username(username)));
-  }
-
-  updateEmail(String email) {
-    emit(state.copyWith(email: EmailAddress(email)));
-  }
-
-  updatePassword(String password) {
-    emit(state.copyWith(password: StrictPassword(password)));
-  }
-
-  register() async {
-    if (!_checkValid()) {
+  register(UserAvatar? userAvatar, Username username, EmailAddress email,
+      StrictPassword password) async {
+    if (!_checkValid(username, email, password)) {
       return;
     }
-    emit(state.copyWith(event: RegisterEvent.loading));
+    emit(const RegisterState.submitting());
     final result = await _authRepository.registerWithEmailAndPassword(
-        state.userAvatar, state.username, state.email, state.password);
+        userAvatar, username, email, password);
     emit(result.fold(
-        (l) => state.copyWith(
-            event: RegisterEvent.error, failureOrSuccessOption: some(left(l))),
-        (r) => state.copyWith(
-            event: RegisterEvent.success,
-            failureOrSuccessOption: some(right(unit)))));
+        (l) => RegisterState.error(l), (r) => const RegisterState.success()));
   }
 
-  bool _checkValid() {
-    if (!state.username.isValid()) {
-      emit(state.copyWith(
-          event: RegisterEvent.error,
-          failureOrSuccessOption:
-              some(left(const AuthFailure.invalidUsername()))));
+  bool _checkValid(
+      Username username, EmailAddress email, StrictPassword password) {
+    if (!username.isValid()) {
+      emit(const RegisterState.error(AuthFailure.invalidUsername()));
       return false;
     }
-    if (!state.email.isValid()) {
-      emit(state.copyWith(
-          event: RegisterEvent.error,
-          failureOrSuccessOption:
-              some(left(const AuthFailure.invalidEmail()))));
+    if (!email.isValid()) {
+      emit(const RegisterState.error(AuthFailure.invalidEmail()));
       return false;
     }
-    if (!state.password.isValid()) {
-      emit(state.copyWith(
-          event: RegisterEvent.error,
-          failureOrSuccessOption:
-              some(left(const AuthFailure.invalidPassword()))));
+    if (!password.isValid()) {
+      emit(const RegisterState.error(AuthFailure.invalidPassword()));
       return false;
     }
     return true;

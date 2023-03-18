@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:enum_annotation/enum_annotation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,44 +20,34 @@ class ViewCaseCubit extends Cubit<ViewCaseState> {
   final AuthRepository _authRepository;
 
   ViewCaseCubit(this._caseRepository, this._authRepository)
-      : super(ViewCaseState.initial());
+      : super(const ViewCaseState.initial());
 
-  fetchCase(UniqueId caseId, Case? caze) {
+  fetchCase(UniqueId caseId) {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
-      emit(state.copyWith(event: ViewCaseEvent.loading));
-      if (caze != null) {
-        emit(_caseLoadedData(caze));
-        return;
-      }
+      emit(const ViewCaseState.loading());
       final result = await _caseRepository.getCase(caseId);
       emit(result.fold(
-          (l) => state.copyWith(
-              event: ViewCaseEvent.loadCaseFailed,
-              loadCaseOption: some(left(l))),
-          (r) => _caseLoadedData(r)));
+          (l) => ViewCaseState.loadCaseFailed(l), (r) => _caseLoadedData(r)));
     });
   }
 
   ViewCaseState _caseLoadedData(Case caze) {
     final createdByUser =
         _authRepository.getUserId()! == caze.userId.getOrCrash();
-    return state.copyWith(
-        event: ViewCaseEvent.caseLoaded,
-        isCreatedByUser: createdByUser,
-        loadCaseOption: some(right(caze)));
+    return ViewCaseState.caseLoaded(caze, createdByUser);
   }
 
   resolveCase(Case caze) {
-    emit(state.copyWith(event: ViewCaseEvent.loading));
-    _caseRepository.resolveCase(caze).then((value) => emit(state.copyWith(
-        event: value.fold((l) => ViewCaseEvent.resolveCaseFailed,
-            (r) => ViewCaseEvent.resolveCaseSuccessful))));
+    emit(const ViewCaseState.loading());
+    _caseRepository.resolveCase(caze).then((value) => emit(value.fold(
+        (l) => ViewCaseState.resolveCaseFailed(l),
+        (r) => const ViewCaseState.resolveCaseSuccessful())));
   }
 
   deleteCase(Case caze) {
-    emit(state.copyWith(event: ViewCaseEvent.loading));
-    _caseRepository.resolveCase(caze).then((value) => emit(state.copyWith(
-        event: value.fold((l) => ViewCaseEvent.deleteCaseFailed,
-            (r) => ViewCaseEvent.deleteCaseSuccessful))));
+    emit(const ViewCaseState.loading());
+    _caseRepository.deleteCase(caze).then((value) => emit(value.fold(
+            (l) => ViewCaseState.deleteCaseFailed(l),
+            (r) => const ViewCaseState.deleteCaseSuccessful())));
   }
 }

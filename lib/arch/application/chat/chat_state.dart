@@ -2,32 +2,28 @@ part of 'chat_cubit.dart';
 
 @freezed
 class ChatState with _$ChatState {
-  const factory ChatState(
-      {required ChatEvent event,
-      required Option<Either<ChatFailure, Unit>> submitMessageOptions,
-      required Option<Either<ChatFailure, PagingData>> loadPageOptions,
-      @Default(null) Message? newMessage}) = _ChatState;
-
   const ChatState._();
 
-  factory ChatState.initial() => ChatState(
-      event: ChatEvent.initial,
-      submitMessageOptions: none(),
-      loadPageOptions: none());
-}
+  factory ChatState.initial() = _Initial;
 
-@generate
-enum ChatEvent {
-  initial,
-  loading,
-  submittingLoading,
-  submitMessageSuccess,
-  submitMessageFailed,
-  loadingPage,
-  appendPage,
-  appendLastPage,
-  loadPageFailed,
-  newMessage,
+  factory ChatState.loading() = _Loading;
+
+  factory ChatState.submittingMessageLoading() = _SubmittingMessageLoading;
+
+  factory ChatState.submitMessageSuccess() = _SubmitMessageSuccess;
+
+  factory ChatState.submitMessageFailed(ChatFailure failure) =
+      _SubmitMessageFailed;
+
+  factory ChatState.loadingPage() = _LoadingPage;
+
+  factory ChatState.appendPage(PagingData data) = _AppendPage;
+
+  factory ChatState.appendLastPage(PagingData data) = _AppendLastPage;
+
+  factory ChatState.loadPageFailed(ChatFailure failure) = _LoadPageFailed;
+
+  factory ChatState.newMessage(Message message) = _NewMessage;
 }
 
 class PagingData {

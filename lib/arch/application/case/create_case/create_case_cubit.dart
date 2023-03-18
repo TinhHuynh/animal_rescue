@@ -1,5 +1,3 @@
-import 'package:dartz/dartz.dart';
-import 'package:enum_annotation/enum_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -11,8 +9,6 @@ import '../../../domain/location/entities/location.dart';
 
 part 'create_case_cubit.freezed.dart';
 
-part 'create_case_cubit.g.dart';
-
 part 'create_case_state.dart';
 
 class CreateCaseCubit extends Cubit<CreateCaseState> {
@@ -20,98 +16,59 @@ class CreateCaseCubit extends Cubit<CreateCaseState> {
 
   CreateCaseCubit(this._caseRepository) : super(CreateCaseState.initial());
 
-  updateTitle(String title) {
-    emit(state.copyWith(
-        event: CreateCaseEvent.inputting, title: CaseTitle(title)));
-  }
-
-  updateDescription(String description) {
-    emit(state.copyWith(
-        event: CreateCaseEvent.inputting,
-        description: CaseDescription(description)));
-  }
-
-  updateAddress(String address) {
-    emit(state.copyWith(
-        event: CreateCaseEvent.inputting, address: CaseAddress(address)));
-  }
-
-  addPhoto(String localPath) {
-    state.photos.value.fold((l) => () {}, (r) {
-      final list = List.of(r);
-      list.add(CaseLocalPhoto(localPath));
-      emit(
-          state.copyWith(event: CreateCaseEvent.addPhoto, photos: List3(list)));
-    });
-  }
-
-  removePhoto(String localPath) {
-    state.photos.value.fold((l) => () {}, (r) {
-      try {
-        final list = List.of(r);
-        list.removeWhere((e) => e.getOrCrash() == localPath);
-        emit(state.copyWith(
-            event: CreateCaseEvent.removePhoto, photos: List3(list)));
-      } catch (e) {
-        emit(state.copyWith(
-            event: CreateCaseEvent.inputFailed,
-            inputOption:
-                Some(left(const CaseFailure.failedToRemovePhoto()))));
-      }
-    });
-  }
-
-  Future<void> submit() async {
-    emit(state.copyWith(event: CreateCaseEvent.submitting));
-    if (!_checkValid()) {
+  Future<void> submit(
+      Location location,
+      CaseTitle title,
+      CaseDescription description,
+      CaseAddress address,
+      List3<CaseLocalPhoto> photos) async {
+    emit(CreateCaseState.submitting());
+    if (!_checkValid(location, title, description, address, photos)) {
       return;
     }
-    final result = await _caseRepository.createCase(state.location, state.title,
-        state.description, state.address, state.photos);
-    emit(result.fold(
-        (l) => state.copyWith(
-            event: CreateCaseEvent.submitFailed,
-            submitOption: some(left(l))),
-        (r) => state.copyWith(
-            event: CreateCaseEvent.submitSuccess,
-            submitOption: some(right(r)))));
+    final result = await _caseRepository.createCase(
+        location, title, description, address, photos);
+    emit(result.fold((l) => CreateCaseState.submitFailed(l),
+        (r) => CreateCaseState.submitSuccess(r)));
   }
 
-  bool _checkValid() {
-    if (!state.location.isValid) {
-      emit(state.onError(const CaseFailure.invalidLocation()));
+  bool _checkValid(
+      Location location,
+      CaseTitle title,
+      CaseDescription description,
+      CaseAddress address,
+      List3<CaseLocalPhoto> photos) {
+    if (!location.isValid) {
+      emit(CreateCaseState.submitFailed(const CaseFailure.invalidLocation()));
       return false;
     }
-    if (!state.title.isValid()) {
-      emit(state.onError(const CaseFailure.invalidTitle()));
+    if (!title.isValid()) {
+      emit(CreateCaseState.submitFailed(const CaseFailure.invalidTitle()));
       return false;
     }
-    if (!state.description.isValid()) {
-      emit(state.onError(const CaseFailure.invalidDescription()));
+    if (!description.isValid()) {
+      emit(
+          CreateCaseState.submitFailed(const CaseFailure.invalidDescription()));
       return false;
     }
-    if (!state.address.isValid()) {
-      emit(state.onError(const CaseFailure.invalidAddress()));
+    if (!address.isValid()) {
+      emit(CreateCaseState.submitFailed(const CaseFailure.invalidAddress()));
       return false;
     }
-    if (state.photos.isEmpty) {
-      emit(state.onError(const CaseFailure.missingPhoto()));
+    if (photos.isEmpty) {
+      emit(CreateCaseState.submitFailed(const CaseFailure.missingPhoto()));
       return false;
     } else {
-      state.photos.value.fold((l) {
-        emit(state.onError(const CaseFailure.moreThan3Photos()));
+      photos.value.fold((l) {
+        emit(CreateCaseState.submitFailed(const CaseFailure.missingPhoto()));
         return false;
       }, (r) {
         if (r.any((element) => !element.isValid() == true)) {
-          emit(state.onError(const CaseFailure.invalidPhoto()));
+          emit(CreateCaseState.submitFailed(const CaseFailure.invalidPhoto()));
           return false;
         }
       });
     }
     return true;
-  }
-
-  setLocation(Location location) {
-    emit(state.copyWith(location: location));
   }
 }

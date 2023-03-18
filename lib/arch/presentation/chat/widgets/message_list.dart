@@ -1,5 +1,4 @@
 import 'package:animal_rescue/extensions/context_x.dart';
-import 'package:dartz/dartz.dart' as dartz;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -7,7 +6,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../../../gen/colors.gen.dart';
 import '../../../application/chat/chat_cubit.dart';
 import '../../../domain/chat/entities/message.dart';
-import '../../../domain/chat/failures/failure.dart';
 import '../../../domain/chat/value_objects/value_object.dart';
 import '../../../domain/core/value_objects.dart';
 import 'my_message.dart';
@@ -38,18 +36,20 @@ class _MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     return Expanded(
         child: BlocListener<ChatCubit, ChatState>(
-      listenWhen: (_, state) => state.event.maybeWhen(
+      listenWhen: (_, state) => state.maybeWhen(
           orElse: () => false,
-          appendPage: () => true,
-          appendLastPage: () => true,
-          loadPageFailed: () => true,
-          newMessage: () => true),
+          appendPage: (_) => true,
+          appendLastPage: (_) => true,
+          loadPageFailed: (_) => true,
+          newMessage: (_) => true),
       listener: (context, state) {
-        state.event.maybeWhen(
-            orElse: () {
-              _handlePagingResult(context, state.loadPageOptions);
-            },
-            newMessage: () => _addNewMessage(state.newMessage));
+        state.maybeWhen(
+            orElse: () {},
+            loadPageFailed: (_) => _pagingController.error =
+                Exception(context.s.failed_to_load_messages),
+            appendPage: (p) => _appendList(p),
+            appendLastPage: (p) => _appendList(p),
+            newMessage: (message) => _addNewMessage(message));
       },
       child: Container(
         color: ColorName.brand.withOpacity(0.4),
@@ -61,8 +61,8 @@ class _MessageListState extends State<MessageList> {
             height: 16,
           ),
           builderDelegate: PagedChildBuilderDelegate(
-            firstPageErrorIndicatorBuilder: (ctx) => const SizedBox(),
-            newPageErrorIndicatorBuilder: (ctx) => const SizedBox(),
+              firstPageErrorIndicatorBuilder: (ctx) => const SizedBox(),
+              newPageErrorIndicatorBuilder: (ctx) => const SizedBox(),
               noItemsFoundIndicatorBuilder: (ctx) => _noItemFoundWidget(ctx),
               itemBuilder: (ctx, item, index) =>
                   ctx.read<ChatCubit>().isMyMessage(item)
@@ -81,16 +81,6 @@ class _MessageListState extends State<MessageList> {
     if (mounted) {
       context.read<ChatCubit>().getMessagesFor(widget.caseId, pageKey);
     }
-  }
-
-  void _handlePagingResult(BuildContext context,
-      dartz.Option<dartz.Either<ChatFailure, PagingData>> loadingPageOptions) {
-    loadingPageOptions.fold(
-        () {},
-        (v) => v.fold(
-            (l) => _pagingController.error =
-                Exception(context.s.failed_to_load_messages),
-            (r) => _appendList(r)));
   }
 
   _appendList(PagingData data) {
@@ -116,10 +106,21 @@ class _MessageListState extends State<MessageList> {
     return Center(
       child: Column(
         children: [
-          const SizedBox(height: 32,),
-          Text(context.s.no_message_here, style: context.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),),
-          const SizedBox(height: 16,),
-          Text(context.s.you_can_start_discussion, style: context.textTheme.bodyMedium,),
+          const SizedBox(
+            height: 32,
+          ),
+          Text(
+            context.s.no_message_here,
+            style: context.textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Text(
+            context.s.you_can_start_discussion,
+            style: context.textTheme.bodyMedium,
+          ),
         ],
       ),
     );

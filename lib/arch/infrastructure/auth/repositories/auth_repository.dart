@@ -39,7 +39,7 @@ class AuthRepositoryImpl extends AuthRepository {
 
   @override
   Future<Either<AuthFailure, Unit>> registerWithEmailAndPassword(
-    UserAvatar userAvatar,
+    UserAvatar? userAvatar,
     Username username,
     EmailAddress emailAddress,
     StrictPassword password,
@@ -53,7 +53,7 @@ class AuthRepositoryImpl extends AuthRepository {
         return left(const AuthFailure.serverError());
       }
       String? avatarUrl;
-      if (userAvatar.isValid()) {
+      if (userAvatar != null && userAvatar.isValid()) {
         avatarUrl = await _uploadAvatar(userAvatar, cred.user!.uid);
       }
       _createUserOnFireStore(user.User(

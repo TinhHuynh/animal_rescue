@@ -11,7 +11,6 @@ import '../../core/widgets/custom_annotated_region.dart';
 import '../../core/widgets/lifecycle_aware.dart';
 import '../widgets/message_list.dart';
 
-
 class ChatPage extends StatelessWidget {
   ChatPage({Key? key, required this.caseId}) : super(key: key);
 
@@ -76,18 +75,18 @@ class ChatPage extends StatelessWidget {
         border: InputBorder.none,
         filled: false,
         suffixIcon: BlocConsumer<ChatCubit, ChatState>(
-          listener: (ctx, state) => state.event.maybeWhen(
-              orElse: () {},
+          listener: (ctx, state) => state.maybeWhen(
+              orElse: () => {},
               submitMessageSuccess: () => _textController.clear(),
-              submitMessageFailed: () =>
+              submitMessageFailed: (e) =>
                   showError(ctx, ctx.s.failed_to_submit_message)),
-          buildWhen: (_, state) => state.event.maybeWhen(
+          buildWhen: (_, state) => state.maybeWhen(
               orElse: () => false,
-              submittingLoading: () => true,
-              submitMessageFailed: () => true,
+              submittingMessageLoading: () => true,
+              submitMessageFailed: (_) => true,
               submitMessageSuccess: () => true),
           builder: (context, state) {
-            return state.event.maybeWhen(
+            return state.maybeWhen(
                 orElse: () => GestureDetector(
                     onTap: () {
                       context
@@ -95,7 +94,7 @@ class ChatPage extends StatelessWidget {
                           .submitMessage(caseId, _textController.text);
                     },
                     child: const Icon(Icons.send)),
-                submittingLoading: () => Transform.scale(
+                submittingMessageLoading: () => Transform.scale(
                     scale: 0.4, child: const CircularProgressIndicator()));
           },
         ));
