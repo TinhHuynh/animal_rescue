@@ -117,7 +117,7 @@ class ViewCasePage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
       child: Text(caze.title.getOrCrash(),
-          style: context.textTheme.headline4
+          style: context.textTheme.headlineMedium
               ?.copyWith(fontWeight: FontWeight.bold, color: Colors.black)),
     );
   }

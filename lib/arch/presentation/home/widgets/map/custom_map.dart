@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../../../../extensions/any_x.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../application/home/home_cubit.dart';
 import '../../../../domain/case/entities/case.dart';
