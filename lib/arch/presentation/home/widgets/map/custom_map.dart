@@ -1,20 +1,29 @@
 import 'dart:async';
 
+import 'package:animal_rescue/arch/presentation/core/widgets/lifecycle_aware.dart';
 import 'package:custom_marker/marker_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../extensions/any_x.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../application/home/home_cubit.dart';
 import '../../../../domain/case/entities/case.dart';
 import '../../../../domain/location/entities/location.dart';
 
 class CustomMap extends StatefulWidget {
-  final Function(Location location) onTap;
-  final Function(Case caze) onMarkerTap;
+  final OnMapTap onTap;
+  final OnMarkerTap onMarkerTap;
+  final OnMarkerLoading? onMarkerLoading;
+  final OnMarkerLoaded? onMarkerLoaded;
 
-  const CustomMap({Key? key, required this.onTap, required this.onMarkerTap})
+  const CustomMap(
+      {Key? key,
+      required this.onTap,
+      required this.onMarkerTap,
+      this.onMarkerLoading,
+      this.onMarkerLoaded})
       : super(key: key);
 
   @override
@@ -25,34 +34,42 @@ class _CustomMapState extends State<CustomMap> {
   static const String myLocationId = 'my-location';
   Set<Marker> _markers = <Marker>{};
   GoogleMapController? _mapController;
-  StreamSubscription<List<Case>>? casesSub;
+  StreamSubscription<List<Case>>? _casesSub;
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HomeCubit, HomeState>(
-      listener: (context, state) {
-        state.maybeWhen(
-            orElse: () {},
-            locationUpdated: (r) {
-              _onMyLocationUpdated(r);
-              _setUpCaseLocationStream(context, r);
-            });
+    return LifecycleAware(
+      onVisibilityLost: (){
+        _casesSub?.pause();
       },
-      child: GoogleMap(
-          myLocationButtonEnabled: false,
-          initialCameraPosition: const CameraPosition(
-            target: LatLng(0.0, 0.0),
-          ),
-          mapType: MapType.normal,
-          zoomControlsEnabled: false,
-          compassEnabled: false,
-          myLocationEnabled: false,
-          onMapCreated: (GoogleMapController controller) {
-            _mapController = controller;
-          },
-          onTap: (p) => widget.onTap.call(
-              Location.double(latitude: p.latitude, longitude: p.longitude)),
-          markers: _markers),
+      onVisibilityGained: (){
+        _casesSub?.resume();
+      },
+      child: BlocListener<HomeCubit, HomeState>(
+        listener: (context, state) {
+          state.maybeWhen(
+              orElse: () {},
+              locationUpdated: (r) {
+                _onMyLocationUpdated(r);
+                _setUpCaseLocationStream(context, r);
+              });
+        },
+        child: GoogleMap(
+            myLocationButtonEnabled: false,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(0.0, 0.0),
+            ),
+            mapType: MapType.normal,
+            zoomControlsEnabled: false,
+            compassEnabled: false,
+            myLocationEnabled: false,
+            onMapCreated: (GoogleMapController controller) {
+              _mapController = controller;
+            },
+            onTap: (p) => widget.onTap.call(
+                Location.double(latitude: p.latitude, longitude: p.longitude)),
+            markers: _markers),
+      ),
     );
   }
 
@@ -79,20 +96,24 @@ class _CustomMapState extends State<CustomMap> {
 
   void _setUpCaseLocationStream(BuildContext context, Location r) {
     _markers.removeWhere((element) => element.markerId.value != myLocationId);
-    casesSub = context.read<HomeCubit>().observeNearbyCase(r).listen((event) {
+    _casesSub = context.read<HomeCubit>().observeNearbyCase(r).listen((event) {
       _handleLocation(event);
     });
   }
 
   Future<void> _handleLocation(List<Case> cases) async {
+    widget.onMarkerLoading?.call();
     _markers.removeWhere((element) => element.markerId.value != myLocationId);
     for (var element in cases) {
-      final marker = _createCaseMarker(element);
-      _markers.add(await marker);
+      final marker = await _createCaseMarker(element);
+      _markers.add(marker);
     }
     setState(() {
       _markers = _markers;
     });
+    widget.onMarkerLoaded?.call(_markers
+        .where((element) => element.markerId.value != myLocationId)
+        .toList());
   }
 
   Future<Marker> _createCaseMarker(Case caze) async {
@@ -112,7 +133,12 @@ class _CustomMapState extends State<CustomMap> {
   @override
   void dispose() {
     _mapController?.dispose();
-    casesSub?.cancel();
+    _casesSub?.cancel();
     super.dispose();
   }
 }
+
+typedef OnMapTap = Function(Location location);
+typedef OnMarkerTap = Function(Case caze);
+typedef OnMarkerLoading = Function();
+typedef OnMarkerLoaded = Function(List<Marker> markers);

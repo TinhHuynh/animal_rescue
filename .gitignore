@@ -36,3 +36,5 @@
 # generated files
 **/*.freezed.dart
 **/*.g.dart
+**/*.gr.dart
+/.flutter-plugins-dependencies

@@ -76,6 +76,13 @@ class HomePageState extends State<HomePage> {
       onMarkerTap: (caze) {
         context.pushRoute(ViewCaseRoute(caseId: caze.id));
       },
+      onMarkerLoading: () {
+        showLoading();
+      },
+      onMarkerLoaded: (list) {
+        hideLoading();
+        showToast(context.s.found_x_nearby_cases(list.length));
+      },
     );
   }
 

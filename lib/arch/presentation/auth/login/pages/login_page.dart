@@ -43,9 +43,11 @@ class _LoginPageState extends State<LoginPage> {
               state.maybeWhen(
                   orElse: () {},
                   success: () async {
+                    final router = context.router;
                     await Future.delayed(const Duration(seconds: 1));
-                    context.router.popForced();
-                    context.router.push(const HomeRoute());
+                    router
+                      ..popForced()
+                      ..push(const HomeRoute());
                   });
             }, child: Builder(
               builder: (context) {
