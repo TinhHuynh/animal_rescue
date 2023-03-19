@@ -44,8 +44,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 state.maybeWhen(
                     orElse: () {},
                     success: () async {
+                      final router = context.router;
                       await Future.delayed(const Duration(seconds: 3));
-                      context.router.navigateBack();
+                      router.navigateBack();
                     });
               },
               child: Padding(

@@ -2,7 +2,6 @@ import 'package:animal_rescue/routes/guards/auth_guard.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../arch/domain/case/entities/case.dart';
 import '../arch/domain/core/value_objects.dart';
 import '../arch/presentation/auth/login/pages/login_page.dart';
 import '../arch/presentation/auth/register/pages/register_page.dart';

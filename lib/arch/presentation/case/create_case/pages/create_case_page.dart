@@ -129,7 +129,7 @@ class _CreateCasePageState extends State<CreateCasePage> {
 
   _label(BuildContext context) {
     return Text(context.s.create_a_case,
-        style: context.theme.textTheme.headline5
+        style: context.theme.textTheme.headlineSmall
             ?.copyWith(fontWeight: FontWeight.bold));
   }
 
