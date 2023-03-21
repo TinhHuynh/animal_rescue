@@ -14,18 +14,23 @@ class MyMessage extends StatelessWidget {
   }
 
   _myMessage(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.end,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            message.content.getOrCrash(),
-            style: context.textTheme.titleMedium?.copyWith(color: Colors.black),
+        const Spacer(flex: 1),
+        Flexible(
+          flex: 20,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              message.content.getOrCrash(),
+              style:
+                  context.textTheme.titleMedium?.copyWith(color: Colors.black),
+            ),
           ),
         ),
       ],
