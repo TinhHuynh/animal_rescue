@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/auth/failures/auth_failure.dart';
 import '../../../domain/auth/repositories/auth_repository.dart';
@@ -9,6 +10,7 @@ part 'login_cubit.freezed.dart';
 
 part 'login_state.dart';
 
+@injectable
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit(this.authRepository) : super(const LoginState.initial());
   final AuthRepository authRepository;

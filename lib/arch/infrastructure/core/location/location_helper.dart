@@ -1,7 +1,9 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../location/dtos/location_dto.dart';
 
+@lazySingleton
 class LocationHelper {
   static String path = "Sites";
 

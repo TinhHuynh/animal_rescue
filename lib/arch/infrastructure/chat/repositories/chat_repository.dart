@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/auth/entities/user.dart';
@@ -14,6 +15,7 @@ import '../../core/firebase/auth_helper.dart';
 import '../../core/firebase/firestore_helper.dart';
 import '../dtos/message_dto.dart';
 
+@Injectable(as: ChatRepository)
 class ChatRepositoryImpl implements ChatRepository {
   final FirestoreHelper _firestoreHelper;
   final AuthHelper _authHelper;

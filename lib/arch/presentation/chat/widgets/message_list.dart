@@ -14,7 +14,7 @@ import 'other_message.dart';
 class MessageList extends StatefulWidget {
   final UniqueId caseId;
 
-  const MessageList({Key? key, required this.caseId}) : super(key: key);
+  const MessageList({super.key, required this.caseId});
 
   @override
   State<MessageList> createState() => _MessageListState();

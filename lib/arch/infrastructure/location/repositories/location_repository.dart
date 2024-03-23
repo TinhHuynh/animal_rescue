@@ -1,11 +1,12 @@
-
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/location/entities/location.dart';
 import '../../../domain/location/failures/location_failure.dart' as failure;
 import '../../../domain/location/repositories/location_repository.dart';
 import '../../core/location/location_helper.dart' as l;
 
+@Injectable(as: LocationRepository)
 class LocationRepositoryImpl implements LocationRepository {
   final l.LocationHelper _locationHelper;
 

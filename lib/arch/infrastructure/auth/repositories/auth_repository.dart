@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animal_rescue/arch/infrastructure/auth/dtos/user_dto.dart';
 import 'package:animal_rescue/utils/logger.dart';
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/auth/entities/user.dart' as user;
 import '../../../domain/auth/failures/auth_failure.dart';
@@ -13,6 +14,7 @@ import '../../core/firebase/auth_helper.dart' as auth;
 import '../../core/firebase/firestore_helper.dart';
 import '../../core/firebase/storage_helper.dart';
 
+@Injectable(as: AuthRepository)
 class AuthRepositoryImpl extends AuthRepository {
   final auth.AuthHelper _authHelper;
   final FirestoreHelper _firestoreHelper;

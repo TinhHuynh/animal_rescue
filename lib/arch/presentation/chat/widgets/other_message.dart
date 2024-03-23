@@ -9,7 +9,7 @@ import '../../../domain/chat/entities/message.dart';
 class OtherMessage extends StatelessWidget {
   final Message message;
 
-  const OtherMessage({Key? key, required this.message}) : super(key: key);
+  const OtherMessage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

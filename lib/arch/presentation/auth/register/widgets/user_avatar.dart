@@ -9,8 +9,7 @@ import '../../../core/dialogs/image_picker.dart';
 class UserAvatarWidget extends StatefulWidget {
   final Function(String? path) onImagePathChanged;
 
-  const UserAvatarWidget({Key? key, required this.onImagePathChanged})
-      : super(key: key);
+  const UserAvatarWidget({super.key, required this.onImagePathChanged});
 
   @override
   State<UserAvatarWidget> createState() => _UserAvatarWidgetState();

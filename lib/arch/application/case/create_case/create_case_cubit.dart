@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/case/failures/failure.dart';
 import '../../../domain/case/repositories/case_repository.dart';
@@ -11,6 +12,7 @@ part 'create_case_cubit.freezed.dart';
 
 part 'create_case_state.dart';
 
+@injectable
 class CreateCaseCubit extends Cubit<CreateCaseState> {
   final CaseRepository _caseRepository;
 

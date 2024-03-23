@@ -1,0 +1,1 @@
+Replace `fvm flutter` to `flutter` if you don't use FVM (Flutter Version Management)

@@ -6,15 +6,14 @@ import '../../../../extensions/any_x.dart';
 
 class LifecycleAware extends StatelessWidget {
   const LifecycleAware(
-      {Key? key,
+      {super.key,
       required this.child,
       this.onFocusGained,
       this.onFocusLost,
       this.onVisibilityGained,
       this.onVisibilityLost,
       this.onForegroundGained,
-      this.onForegroundLost})
-      : super(key: key);
+      this.onForegroundLost});
 
   final Widget child;
 

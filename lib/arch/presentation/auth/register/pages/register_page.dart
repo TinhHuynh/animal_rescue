@@ -1,6 +1,6 @@
 import 'package:animal_rescue/arch/domain/auth/value_objects/value_object.dart';
 import 'package:animal_rescue/arch/presentation/auth/register/widgets/user_avatar.dart';
-import 'package:animal_rescue/di/get_it.dart';
+import 'package:animal_rescue/di/di.dart';
 import 'package:animal_rescue/extensions/any_x.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
 import 'package:animal_rescue/gen/colors.gen.dart';
@@ -15,8 +15,9 @@ import '../../../core/widgets/border_text_field.dart';
 import '../../../core/widgets/custom_annotated_region.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 
+@RoutePage()
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -46,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     success: () async {
                       final router = context.router;
                       await Future.delayed(const Duration(seconds: 3));
-                      router.navigateBack();
+                      router.back();
                     });
               },
               child: Padding(
@@ -203,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage> {
               size: 24,
             ),
           ),
-          onTap: () => context.router.pop(),
+          onTap: () => context.router.maybePop(),
         ));
   }
 

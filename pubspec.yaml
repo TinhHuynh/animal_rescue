@@ -6,53 +6,60 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
+  sdk: ">=3.1.0 <4.0.0"
+  flutter: ">=3.13.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.5
-  flutter_native_splash: ^2.2.16
-  auto_route: ^5.0.4
-  freezed_annotation: ^2.2.0
-  json_annotation: ^4.7.0
+  cupertino_icons: ^1.0.6
+  flutter_native_splash: ^2.4.0
+  auto_route: ^7.9.2
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
   dartz: ^0.10.1
-  uuid: ^3.0.7
-  flutter_bloc: ^8.1.1
-  get_it: ^7.2.0
+  uuid: ^4.3.3
+  flutter_bloc: ^8.1.4
+  get_it: ^7.6.7
+  injectable: ^2.4.0
   flutter_localizations:
     sdk: flutter
   firebase_core : ^2.3.0
-  firebase_auth: ^4.1.5
-  image_picker: ^0.8.6
-  logger: ^1.1.0
-  enum_annotation: ^0.0.2
-  cloud_firestore: ^4.1.0
-  firebase_storage: ^11.0.6
-  path: ^1.8.2
-  google_maps_flutter: ^2.2.2
-  geolocator: ^9.0.2
+  firebase_auth: ^4.17.9
+  image_picker: ^1.0.7
+  logger: ^2.2.0
+  enum_annotation: ^0.0.4
+  cloud_firestore: ^4.15.9
+  firebase_storage: ^11.6.10
+  path: ^1.9.0
+  google_maps_flutter: ^2.6.0
+  geolocator: ^11.0.0
   flutter_easyloading: ^3.0.5
   focus_detector: ^2.0.1
-  fluttertoast: ^8.1.2
-  dotted_border: ^2.0.0+3
+  fluttertoast: ^8.2.4
+  dotted_border: ^2.1.0
   carousel_slider: ^4.2.1
-  url_launcher: ^6.1.7
-  geoflutterfire2: ^2.3.14
+  url_launcher: ^6.2.5
+  geoflutterfire2: ^2.3.15
   custom_marker: ^1.0.0
-  infinite_scroll_pagination: ^3.2.0
+  infinite_scroll_pagination: ^4.0.0
+  intl_utils: ^2.8.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.10.0"
-  build_runner: ^2.3.2
-  flutter_gen_runner: ^5.1.0+1
-  auto_route_generator: ^5.0.3
-  freezed: ^2.3.1
-  json_serializable: ^6.5.4
-  flutter_lints: ^2.0.1
-  enum_generator: ^1.0.8
+  flutter_launcher_icons: "^0.13.1"
+  build_runner: ^2.4.8
+  flutter_gen_runner: ^5.4.0
+  auto_route_generator: ^7.3.2
+  freezed: ^2.4.7
+  json_serializable: ^6.7.1
+  flutter_lints: ^3.0.1
+  enum_generator: ^1.1.2
+  injectable_generator: ^2.6.1
+
+dependency_overrides:
+  meta: ^1.12.0
 
 flutter_gen:
 
@@ -102,3 +109,4 @@ flutter:
           style: italic
 flutter_intl:
   enabled: true
+  output_dir: lib/gen

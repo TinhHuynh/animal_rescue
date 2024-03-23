@@ -6,7 +6,7 @@ import '../../../domain/chat/entities/message.dart';
 class MyMessage extends StatelessWidget {
   final Message message;
 
-  const MyMessage({Key? key, required this.message}) : super(key: key);
+  const MyMessage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

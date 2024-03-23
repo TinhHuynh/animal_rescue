@@ -45,7 +45,7 @@ showToast(String message, {backgroundColor = ColorName.brand}) {
 backIcon(BuildContext context) {
   return GestureDetector(
     onTap: () {
-      context.navigateBack();
+      context.back();
     },
     child: const Icon(
       Icons.arrow_back_ios_new,

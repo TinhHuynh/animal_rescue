@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animal_rescue/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/case/enums/case_status.dart';
 import '../../auth/dtos/user_dto.dart';
@@ -10,19 +11,17 @@ import '../../case/dtos/case_dto.dart';
 import '../../chat/dtos/message_dto.dart';
 import '../../location/dtos/location_dto.dart';
 
+@lazySingleton
 class FirestoreHelper {
-  static final instance = FirestoreHelper(FirebaseFirestore.instance);
 
-  final FirebaseFirestore _db;
+  FirestoreHelper();
 
-  FirestoreHelper(this._db);
+  CollectionReference get _usersCollection => FirebaseFirestore.instance.collection('users');
 
-  CollectionReference get _usersCollection => _db.collection('users');
-
-  CollectionReference get _casesCollection => _db.collection('cases');
+  CollectionReference get _casesCollection => FirebaseFirestore.instance.collection('cases');
 
   CollectionReference _chatsCollection(String caseId) =>
-      _db.collection('chats/$caseId/messages');
+      FirebaseFirestore.instance.collection('chats/$caseId/messages');
 
   createUser(UserDto user) async {
     try {

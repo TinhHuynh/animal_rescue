@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
 class ImageCarousel extends StatefulWidget {
-  const ImageCarousel({Key? key, required this.imageUrls}) : super(key: key);
+  const ImageCarousel({super.key, required this.imageUrls});
 
   final List<String> imageUrls;
 

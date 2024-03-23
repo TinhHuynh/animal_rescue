@@ -18,12 +18,11 @@ class CustomMap extends StatefulWidget {
   final OnMarkerLoaded? onMarkerLoaded;
 
   const CustomMap(
-      {Key? key,
+      {super.key,
       required this.onTap,
       required this.onMarkerTap,
       this.onMarkerLoading,
-      this.onMarkerLoaded})
-      : super(key: key);
+      this.onMarkerLoaded});
 
   @override
   State<CustomMap> createState() => _CustomMapState();

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../../di/get_it.dart';
+import '../../../../../di/di.dart';
 import '../../../../application/case/view_case/view_case_cubit.dart';
 import '../../../../domain/case/entities/case.dart';
 import '../../../../domain/core/value_objects.dart';
@@ -14,10 +14,11 @@ import '../../../core/widgets/custom_annotated_region.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 import '../widgets/image_carousel.dart';
 
+@RoutePage()
 class ViewCasePage extends StatelessWidget {
   final UniqueId caseId;
 
-  const ViewCasePage({Key? key, required this.caseId}) : super(key: key);
+  const ViewCasePage({super.key, required this.caseId});
 
   @override
   Widget build(BuildContext context) {
@@ -219,11 +220,11 @@ class ViewCasePage extends StatelessWidget {
 
   _showResolveCaseSuccessful(BuildContext context) {
     showToast(context.s.resolve_case_successful);
-    context.popRoute();
+    context.maybePop();
   }
 
   _deleteCaseSuccessful(BuildContext context) {
     showToast(context.s.delete_case_successful);
-    context.popRoute();
+    context.maybePop();
   }
 }

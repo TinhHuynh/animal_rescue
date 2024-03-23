@@ -15,7 +15,7 @@ class BorderTextField extends StatefulWidget {
   final InputDecoration Function(bool)? decoration;
 
   const BorderTextField({
-    Key? key,
+    super.key,
     this.focusNode,
     this.keyboardType,
     this.onChanged,
@@ -23,7 +23,7 @@ class BorderTextField extends StatefulWidget {
     this.labelText,
     this.errorText,
     this.maxLines,
-  }) : super(key: key);
+  });
 
   @override
   BaseBorderTextFieldState<BorderTextField> createState() =>

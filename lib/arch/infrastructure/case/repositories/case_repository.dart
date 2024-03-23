@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/case/entities/case.dart';
 import '../../../domain/case/enums/case_status.dart';
@@ -16,6 +17,7 @@ import '../../core/firebase/storage_helper.dart';
 import '../../location/dtos/location_dto.dart';
 import '../dtos/case_dto.dart';
 
+@Injectable(as: CaseRepository)
 class CaseRepositoryImpl implements CaseRepository {
   final StorageHelper _storageHelper;
   final FirestoreHelper _firestoreHelper;

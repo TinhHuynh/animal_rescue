@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/auth/repositories/auth_repository.dart';
 import '../../domain/case/enums/case_status.dart';
@@ -17,6 +18,7 @@ part 'chat_cubit.freezed.dart';
 
 part 'chat_state.dart';
 
+@injectable
 class ChatCubit extends Cubit<ChatState> {
   final ChatRepository _chatRepository;
   final AuthRepository _authRepository;
