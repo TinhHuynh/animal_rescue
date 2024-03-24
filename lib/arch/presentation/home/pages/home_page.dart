@@ -1,6 +1,6 @@
 import 'package:animal_rescue/arch/domain/location/failures/location_failure.dart';
 import 'package:animal_rescue/arch/presentation/home/widgets/drawer.dart';
-import 'package:animal_rescue/di/get_it.dart';
+import 'package:animal_rescue/di/di.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
 import 'package:animal_rescue/routes/app_router.dart';
 import 'package:auto_route/auto_route.dart';
@@ -16,8 +16,9 @@ import '../../core/widgets/custom_annotated_region.dart';
 import '../../core/widgets/lifecycle_aware.dart';
 import '../widgets/map/custom_map.dart';
 
+@RoutePage()
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => HomePageState();

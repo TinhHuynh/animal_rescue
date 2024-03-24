@@ -2,6 +2,7 @@ import 'package:enum_annotation/enum_annotation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/auth/repositories/auth_repository.dart';
 import '../../../domain/case/entities/case.dart';
@@ -15,6 +16,7 @@ part 'view_case_cubit.g.dart';
 
 part 'view_case_state.dart';
 
+@injectable
 class ViewCaseCubit extends Cubit<ViewCaseState> {
   final CaseRepository _caseRepository;
   final AuthRepository _authRepository;

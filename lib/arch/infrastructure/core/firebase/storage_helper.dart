@@ -1,18 +1,18 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class StorageHelper {
-  static final StorageHelper instance = StorageHelper(FirebaseStorage.instance);
-  final FirebaseStorage _storage;
 
-  Reference get _storageRef => _storage.ref();
+  Reference get _storageRef => FirebaseStorage.instance.ref();
 
   Reference get _avatarRef => _storageRef.child("images/avatars");
 
   Reference get _casePhotoRef => _storageRef.child("images/cases");
 
-  StorageHelper(this._storage);
+  StorageHelper();
 
   Future uploadAvatar(File file, String uid) async {
     final ref = _avatarRef.child("$uid/avatar");

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../generated/l10n.dart';
+import '../gen/l10n.dart';
 
 extension ContextX on BuildContext {
   MediaQueryData get mediaQuery => MediaQuery.of(this);

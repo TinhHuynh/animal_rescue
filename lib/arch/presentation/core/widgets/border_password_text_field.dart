@@ -13,14 +13,14 @@ class BorderPasswordTextField extends StatefulWidget {
   final InputDecoration Function(bool)? decoration;
 
   const BorderPasswordTextField({
-    Key? key,
+    super.key,
     this.focusNode,
     this.onChanged,
     this.decoration,
     this.labelText,
     this.errorText,
     this.helperText,
-  }) : super(key: key);
+  });
 
   @override
   BaseBorderTextFieldState<BorderPasswordTextField> createState() =>

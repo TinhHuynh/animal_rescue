@@ -7,7 +7,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../di/get_it.dart';
+import '../../../../../di/di.dart';
 import '../../../../../routes/app_router.dart';
 import '../../../../../utils/keyboard_utils.dart';
 import '../../../../application/case/create_case/create_case_cubit.dart';
@@ -16,7 +16,7 @@ import '../../../core/widgets/border_text_field.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 
 class CreateCasePage extends StatefulWidget {
-  const CreateCasePage({Key? key, required this.location}) : super(key: key);
+  const CreateCasePage({super.key, required this.location});
 
   final Location location;
 

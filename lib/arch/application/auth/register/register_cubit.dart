@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../domain/auth/failures/auth_failure.dart';
 import '../../../domain/auth/repositories/auth_repository.dart';
@@ -8,7 +9,7 @@ import '../../../domain/auth/value_objects/value_object.dart';
 part 'register_cubit.freezed.dart';
 
 part 'register_state.dart';
-
+@injectable
 class RegisterCubit extends Cubit<RegisterState> {
   final AuthRepository _authRepository;
 

@@ -6,8 +6,7 @@ class CustomAnnotatedRegion extends StatelessWidget {
   final Color? statusBarColor;
 
   const CustomAnnotatedRegion(
-      {Key? key, required this.child, this.statusBarColor})
-      : super(key: key);
+      {super.key, required this.child, this.statusBarColor});
 
   @override
   Widget build(BuildContext context) {

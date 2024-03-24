@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../arch/domain/auth/repositories/auth_repository.dart';
 import '../app_router.dart';
 
+@injectable
 class AuthGuard extends AutoRouteGuard {
   final AuthRepository _repository;
 

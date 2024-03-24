@@ -11,8 +11,7 @@ import '../../../core/dialogs/image_picker.dart';
 
 class PhotoList extends StatefulWidget {
   const PhotoList(
-      {Key? key, required this.onPhotoAdded, required this.onPhotoRemoved})
-      : super(key: key);
+      {super.key, required this.onPhotoAdded, required this.onPhotoRemoved});
   final Function(List<CaseLocalPhoto> list, CaseLocalPhoto added) onPhotoAdded;
   final Function(List<CaseLocalPhoto> list, CaseLocalPhoto removed)
       onPhotoRemoved;

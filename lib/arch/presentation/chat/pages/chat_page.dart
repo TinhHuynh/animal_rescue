@@ -1,6 +1,7 @@
-import 'package:animal_rescue/di/get_it.dart';
+import 'package:animal_rescue/di/di.dart';
 import 'package:animal_rescue/extensions/any_x.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,8 +12,9 @@ import '../../core/widgets/custom_annotated_region.dart';
 import '../../core/widgets/lifecycle_aware.dart';
 import '../widgets/message_list.dart';
 
+@RoutePage()
 class ChatPage extends StatelessWidget {
-  ChatPage({Key? key, required this.caseId}) : super(key: key);
+  ChatPage({super.key, required this.caseId});
 
   final TextEditingController _textController = TextEditingController();
   final UniqueId caseId;

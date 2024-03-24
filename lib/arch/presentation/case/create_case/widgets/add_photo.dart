@@ -7,8 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../application/case/create_case/create_case_cubit.dart';
 
 class AddPhotoSection extends StatelessWidget {
-  const AddPhotoSection({Key? key, required this.onPhotoListUpdated})
-      : super(key: key);
+  const AddPhotoSection({super.key, required this.onPhotoListUpdated});
 
   final Function(List<CaseLocalPhoto>) onPhotoListUpdated;
 

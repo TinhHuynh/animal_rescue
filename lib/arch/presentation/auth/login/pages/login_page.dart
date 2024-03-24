@@ -1,5 +1,5 @@
 import 'package:animal_rescue/arch/domain/auth/value_objects/value_object.dart';
-import 'package:animal_rescue/di/get_it.dart';
+import 'package:animal_rescue/di/di.dart';
 import 'package:animal_rescue/extensions/context_x.dart';
 import 'package:animal_rescue/gen/assets.gen.dart';
 import 'package:animal_rescue/gen/colors.gen.dart';
@@ -16,8 +16,9 @@ import '../../../core/widgets/border_text_field.dart';
 import '../../../core/widgets/custom_annotated_region.dart';
 import '../../../core/widgets/lifecycle_aware.dart';
 
+@RoutePage()
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();

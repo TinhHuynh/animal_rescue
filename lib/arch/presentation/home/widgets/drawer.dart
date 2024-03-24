@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../application/home/home_cubit.dart';
 
 class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({Key? key}) : super(key: key);
+  const HomeDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
